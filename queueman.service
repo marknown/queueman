@@ -1,0 +1,15 @@
+[Unit]
+Description=Queueman can dispatch queue data to your receiver URL via http(s) protocol
+Documentation=https://github.com/marknown/queueman
+After=network.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/queueman.pid
+ExecStart=/usr/bin/nohup /usr/local/bin/queueman_linux -c /etc/queueman.json > /var/log/queueman/error.log 2>&1 &
+ExecStop=/bin/kill -s QUIT $MAINPID
+Restart=1
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

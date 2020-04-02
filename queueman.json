@@ -1,0 +1,141 @@
+{
+    "App": {
+        "IsDebug" : false,
+        "PIDFile" : "/var/run/queueman.pid"
+    },
+    "Redis": [
+        {
+            "Config" : {
+                "Network"       : "tcp",
+                "Host"          : "127.0.0.1",
+                "Port"          : 6379,
+                "Password"      : "",
+                "DB"            : 0,
+                "Timeout"       : 5,
+                "MaxActive"     : 1000,
+                "MaxIdle"       : 200,
+                "MaxIdleTimeout": 10,
+                "Wait"          : true
+            },
+            "Queues": [
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": false,
+                    "QueueName": "queue:test1",
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                },
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": true,
+                    "QueueName": "queue:test2",
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                }
+            ]
+        }
+    ],
+    "RabbitMQ": [
+        {
+            "Config" : {
+                "Scheme"       : "amqp",
+                "Host"          : "Replace your Host",
+                "Port"          : 5672,
+                "User"          : "",
+                "Password"      : "",
+                "Vhost"         : "Replace your Vhost",
+                "Type"          : "Aliyun",
+                "AliyunParams"  : {
+                    "AccessKey"      : "Replace your AccessKey",
+                    "AccessKeySecret": "Replace your AccessKeySecret",
+                    "ResourceOwnerId": 1000000000000000
+                }
+            },
+            "Queues" : [
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": false,
+                    "IsDurable": true,
+                    "ExchangeName": "test.exchange.direct1",
+                    "ExchangeType": "direct",
+                    "QueueName": "test.queue.direct1",
+                    "RoutingKey": "test.route.direct1",
+                    "ConsumerTag": "test.consumer.direct1",
+                    "IsAutoAck": false,
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                },
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": true,
+                    "IsDurable": true,
+                    "ExchangeName": "test.exchange.direct2",
+                    "ExchangeType": "direct",
+                    "QueueName": "test.queue.direct2",
+                    "RoutingKey": "test.route.direct2",
+                    "ConsumerTag": "test.consumer.direct2",
+                    "IsAutoAck": false,
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                }
+            ]
+        },
+        {
+            "Config" : {
+                "Scheme"       : "amqp",
+                "Host"          : "Replace your Host",
+                "Port"          : 5672,
+                "User"          : "Replace your User",
+                "Password"      : "Replace your Password",
+                "Vhost"         : "/",
+                "Type"          : ""
+            },
+            "Queues" : [
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": false,
+                    "IsDurable": true,
+                    "ExchangeName": "test.exchange.direct1",
+                    "ExchangeType": "direct",
+                    "QueueName": "test.queue.direct1",
+                    "RoutingKey": "test.route.direct1",
+                    "ConsumerTag": "test.consumer.direct1",
+                    "IsAutoAck": false,
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                },
+                {
+                    "IsEnabled": true,
+                    "IsDelayQueue": true,
+                    "IsDurable": true,
+                    "ExchangeName": "test.exchange.direct2",
+                    "ExchangeType": "direct",
+                    "QueueName": "test.queue.direct2",
+                    "RoutingKey": "test.route.direct2",
+                    "ConsumerTag": "test.consumer.direct2",
+                    "IsAutoAck": false,
+                    "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
+                    "DispatchTimeout": 30,
+                    "Concurency": 5,
+                    "DelayConcurency": 3,
+                    "DelayOnFailure": [60, 120]
+                }
+            ]
+        }
+    ]
+}
