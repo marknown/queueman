@@ -1,6 +1,6 @@
 # Queueman
 
-Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件。
+Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件。支持延时队列、并发控制、失败自动重试。
 
 1. 简单的并发控制
 2. 简单配置就可以自动失败后重试
