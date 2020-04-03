@@ -3,6 +3,22 @@
         "IsDebug" : false,
         "PIDFile" : "/var/run/queueman.pid"
     },
+    "Statistic": {
+        "HTTPPort": 8080,
+        "SourceType": "Redis",
+        "RedisSource" : {
+            "Network"       : "tcp",
+            "Host"          : "127.0.0.1",
+            "Port"          : 6379,
+            "Password"      : "",
+            "DB"            : 0,
+            "Timeout"       : 5,
+            "MaxActive"     : 1000,
+            "MaxIdle"       : 200,
+            "MaxIdleTimeout": 10,
+            "Wait"          : true
+        }
+    },
     "Redis": [
         {
             "Config" : {
@@ -107,11 +123,11 @@
                     "IsEnabled": true,
                     "IsDelayQueue": false,
                     "IsDurable": true,
-                    "ExchangeName": "test.exchange.direct1",
+                    "ExchangeName": "test.exchange.direct3",
                     "ExchangeType": "direct",
-                    "QueueName": "test.queue.direct1",
-                    "RoutingKey": "test.route.direct1",
-                    "ConsumerTag": "test.consumer.direct1",
+                    "QueueName": "test.queue.direct3",
+                    "RoutingKey": "test.route.direct3",
+                    "ConsumerTag": "test.consumer.direct3",
                     "IsAutoAck": false,
                     "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
                     "DispatchTimeout": 30,
@@ -123,11 +139,11 @@
                     "IsEnabled": true,
                     "IsDelayQueue": true,
                     "IsDurable": true,
-                    "ExchangeName": "test.exchange.direct2",
+                    "ExchangeName": "test.exchange.direct4",
                     "ExchangeType": "direct",
-                    "QueueName": "test.queue.direct2",
-                    "RoutingKey": "test.route.direct2",
-                    "ConsumerTag": "test.consumer.direct2",
+                    "QueueName": "test.queue.direct4",
+                    "RoutingKey": "test.route.direct4",
+                    "ConsumerTag": "test.consumer.direct4",
                     "IsAutoAck": false,
                     "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
                     "DispatchTimeout": 30,

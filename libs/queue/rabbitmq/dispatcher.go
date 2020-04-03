@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"queueman/libs/queue/types"
 	"queueman/libs/request"
+	"queueman/libs/statistic"
 	"strings"
 	"time"
 
@@ -147,6 +148,7 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 			if qi.Queue.IsAutoAck {
 				d.Ack(false)
 				status = "Auto acked"
+				statistic.IncrSuccessCounter(qi.Queue.QueueName)
 			} else {
 				// failure
 				if 1 != result.Code {
@@ -168,6 +170,7 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 							}).Warn("Serialize DelayQueueData error")
 
 							d.Ack(false) // when a error occur acked
+							statistic.IncrFailureCounter(qi.Queue.QueueName)
 							<-concurency // remove control
 							return
 						}
@@ -215,12 +218,13 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 						}).Info("Delayed to queue")
 					} else {
 						status = "Normal Failure"
+						statistic.IncrFailureCounter(qi.Queue.QueueName)
 					}
 
 					d.Ack(false)
 				} else {
-					// q.IncrCounter(fmt.Sprintf("%s:success", qi.Queue.QueueName))
 					status = "Normal Acked"
+					statistic.IncrSuccessCounter(qi.Queue.QueueName)
 					d.Ack(false)
 				}
 			}
@@ -348,6 +352,7 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 			if qi.Queue.IsAutoAck {
 				d.Ack(false)
 				status = "Auto acked"
+				statistic.IncrSuccessCounter(qi.Queue.QueueName)
 			} else {
 				// failure
 				if 1 != result.Code {
@@ -369,6 +374,7 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 							}).Warn("Serialize DelayQueueData error")
 
 							d.Ack(false) // when a error occur acked
+							statistic.IncrFailureCounter(qi.Queue.QueueName)
 							<-concurency // remove control
 							return
 						}
@@ -414,12 +420,13 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 						}).Info("Delayed to queue")
 					} else {
 						status = "Failure"
+						statistic.IncrFailureCounter(qi.Queue.QueueName)
 					}
 
 					d.Ack(false) // we alrealy pushed failure message to delay queue, so mark as acked
 				} else {
-					// todostat q.IncrCounter(fmt.Sprintf("%s:success", qi.Queue.QueueName))
 					status = "Success"
+					statistic.IncrSuccessCounter(qi.Queue.QueueName)
 					d.Ack(false)
 				}
 			}
@@ -434,12 +441,8 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 	}
 }
 
-// todo
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
 	}
 }
-
-// todo rabbitmq 延时队列改造
-// todo redis 延时队列改造

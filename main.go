@@ -2,10 +2,14 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
 	"os"
 	"queueman/libs/command"
 	"queueman/libs/config"
+	"queueman/libs/constant"
 	"queueman/libs/queue"
+	"queueman/libs/statistic"
 	"runtime/debug"
 	"time"
 
@@ -45,6 +49,8 @@ func main() {
 
 	// Get config file content to struct
 	cfg := config.GetConfig(args.ConfigFile)
+	// init statistic for record
+	statistic.InitStatistic(cfg.Statistic)
 
 	if !cfg.App.IsDebug {
 		log.SetLevel(log.WarnLevel)
@@ -92,6 +98,26 @@ func main() {
 
 	for _, config := range cfg.RabbitMQ {
 		go queue.QFactory("RabbitMQ").Dispatcher(config)
+	}
+
+	if cfg.Statistic.HTTPPort > 0 {
+		http.HandleFunc("/statistic", func(w http.ResponseWriter, r *http.Request) {
+			format := r.FormValue("format")
+			if "json" != format {
+				format = "html"
+			}
+
+			fmt.Fprint(w, command.GetStats(args, format))
+			return
+		})
+
+		err = http.ListenAndServe(fmt.Sprintf(":%d", cfg.Statistic.HTTPPort), nil)
+
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+			}).Fatal("%s can not listening on port %d", constant.APPNAME, cfg.Statistic.HTTPPort)
+		}
 	}
 
 	for {

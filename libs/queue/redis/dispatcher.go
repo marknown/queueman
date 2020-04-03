@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"queueman/libs/queue/types"
 	"queueman/libs/request"
+	"queueman/libs/statistic"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -137,6 +138,7 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 							"Message": result.Message,
 						}).Warn("Serialize DelayQueueData error")
 
+						statistic.IncrFailureCounter(qi.Queue.QueueName)
 						<-concurency // remove control
 						return
 					}
@@ -151,13 +153,12 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 					}).Info("Delayed to queue")
 				} else {
 					// finally also failure
-					qi.IncrCounter(fmt.Sprintf("%s:failure", qi.Queue.QueueName))
-
 					status = "Normal Failure"
+					statistic.IncrFailureCounter(qi.Queue.QueueName)
 				}
 			} else {
 				status = "Normal Acked"
-				qi.IncrCounter(fmt.Sprintf("%s:success", qi.Queue.QueueName))
+				statistic.IncrSuccessCounter(qi.Queue.QueueName)
 			}
 
 			log.WithFields(log.Fields{
@@ -269,6 +270,7 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 								"Message": result.Message,
 							}).Warn("Serialize DelayQueueData error")
 
+							statistic.IncrFailureCounter(qi.Queue.QueueName)
 							<-concurency // remove control
 							return
 						}
@@ -284,14 +286,12 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 						}).Info("Delayed to queue")
 					} else {
 						// finally also failure
-						qi.IncrCounter(fmt.Sprintf("%s:failure", qi.Queue.QueueName))
-
 						status = "Failure"
+						statistic.IncrFailureCounter(qi.Queue.QueueName)
 					}
 				} else {
-					qi.IncrCounter(fmt.Sprintf("%s:success", qi.Queue.QueueName))
-
 					status = "Success"
+					statistic.IncrSuccessCounter(qi.Queue.QueueName)
 				}
 
 				log.WithFields(log.Fields{

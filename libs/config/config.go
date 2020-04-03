@@ -3,6 +3,7 @@ package config
 import (
 	"queueman/libs/queue/rabbitmq"
 	"queueman/libs/queue/redis"
+	"queueman/libs/statistic"
 	"sort"
 	"sync"
 
@@ -17,9 +18,10 @@ type App struct {
 
 // Config for the file
 type Config struct {
-	App      App
-	Redis    []redis.CombineConfig
-	RabbitMQ []rabbitmq.CombineConfig
+	App       App
+	Statistic statistic.Config
+	Redis     []redis.CombineConfig
+	RabbitMQ  []rabbitmq.CombineConfig
 }
 
 var once = &sync.Once{}

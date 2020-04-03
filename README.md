@@ -20,6 +20,8 @@ Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件�
 	- [指定地址的响应](#指定地址的响应)
 	- [并发控制](#并发控制)
 	- [失败后处理](#失败后处理)
+  	- [命令行工具](#命令行工具)
+	- [查看统计信息](#查看统计信息)
 	- [配置文件详解](#配置文件详解)
 - [维护者](#维护者)
 - [如何贡献](#如何贡献)
@@ -195,12 +197,77 @@ message | if success `ok` else `fail` | ok
 ```
 如上配置表示第一次失败后，投递消息到失败延时处理队列，60秒（一分钟）后触发，如果再一次失败则`300-60=240`秒后触发（即第五分钟），再次失败则丢弃。
 
+## 命令行工具
+`-c` 指定配置文件路径
+```
+./queueman_linux -c ./queueman.json
+```
+
+`-t` 测试指定的配置文件是否正常（可以结合 `-c`一起使用）
+```
+./queueman_linux -c ./queueman.json -t
+```
+
+`-s` 在命令行下显示统计信息（可以结合 `-c`一起使用）
+```
+./queueman_linux -c ./queueman.json -s
+```
+
+`-h` 查看帮助信息
+```
+./queueman_linux -h
+
+----------------------------------------------
+	Welcome to Use QueueMan V0.0.1
+----------------------------------------------
+
+usage:
+  -c string
+    	the configure file path (default "./queueman.json")
+  -h	show help information
+  -s	show statistics information
+  -t	test configure in "queueman.json" file
+```
+
+## 查看统计信息
+### 命令行下查看
+```
+./queueman_linux -c ./queueman.json -s
+```
+
+### Web方式查看
+返回 html 格式
+```
+curl "http://127.0.0.1:8080/statistic?format=html"
+```
+
+返回 json 格式
+```
+curl "http://127.0.0.1:8080/statistic?format=json"
+```
+
 ## 配置文件详解
 ```
 {
     "App": {								   # Queueman app 级别配置
         "IsDebug" : false,                     # true （会输出 info 级别信息） false （只输出 warn 级别及以上信息）
         "PIDFile" : "/var/run/queueman.pid"    # pid文件位置
+    },
+    "Statistic": {                             # 统计配置
+        "HTTPPort": 8080,                      # Web 查看端口
+        "SourceType": "Redis",                 # 统计到 Redis
+        "RedisSource" : {
+            "Network"       : "tcp",           # Redis 超时时间
+            "Host"          : "127.0.0.1",     # Redis 地址
+            "Port"          : 6379,            # Redis 端口
+            "Password"      : "",              # Redis 密码，没有设置请置空
+            "DB"            : 0,               # Redis DB 值
+            "Timeout"       : 5,               # Redis 超时时间
+            "MaxActive"     : 1000,
+            "MaxIdle"       : 200,
+            "MaxIdleTimeout": 10,
+            "Wait"          : true
+        }
     },
     "Redis": [
         {
@@ -256,7 +323,7 @@ message | if success `ok` else `fail` | ok
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": false,
-                    "QueueName": "queue:test1",
+                    "QueueName": "queue:test3",
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,
                     "Concurency": 5,
@@ -266,7 +333,7 @@ message | if success `ok` else `fail` | ok
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": true,
-                    "QueueName": "queue:test2",
+                    "QueueName": "queue:test4",
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,
                     "Concurency": 5,
@@ -342,11 +409,11 @@ message | if success `ok` else `fail` | ok
                     "IsEnabled": true,
                     "IsDelayQueue": false,
                     "IsDurable": true,
-                    "ExchangeName": "test.exchange.direct1",
+                    "ExchangeName": "test.exchange.direct3",
                     "ExchangeType": "direct",
-                    "QueueName": "test.queue.direct1",
-                    "RoutingKey": "test.route.direct1",
-                    "ConsumerTag": "test.consumer.direct1",
+                    "QueueName": "test.queue.direct3",
+                    "RoutingKey": "test.route.direct3",
+                    "ConsumerTag": "test.consumer.direct3",
                     "IsAutoAck": false,
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,
@@ -358,11 +425,11 @@ message | if success `ok` else `fail` | ok
                     "IsEnabled": true,
                     "IsDelayQueue": true,
                     "IsDurable": true,
-                    "ExchangeName": "test.exchange.direct2",
+                    "ExchangeName": "test.exchange.direct4",
                     "ExchangeType": "direct",
-                    "QueueName": "test.queue.direct2",
-                    "RoutingKey": "test.route.direct2",
-                    "ConsumerTag": "test.consumer.direct2",
+                    "QueueName": "test.queue.direct4",
+                    "RoutingKey": "test.route.direct4",
+                    "ConsumerTag": "test.consumer.direct4",
                     "IsAutoAck": false,
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,

@@ -170,39 +170,3 @@ func (qi *QueueInstance) DelayLength(queueName string) (int64, error) {
 
 	return replyInt, nil
 }
-
-// IncrCounter increase counter number
-func (qi *QueueInstance) IncrCounter(keyName string) (int64, error) {
-	conn, _ := qi.GetConnection()
-	defer conn.Close()
-
-	reply, err := conn.Do("INCR", keyName)
-
-	if nil != err {
-		return 0, err
-	}
-	replyInt, err := redis.Int64(reply, err)
-	if nil != err {
-		return 0, err
-	}
-
-	return replyInt, nil
-}
-
-// GetCounter get counter number
-func (qi *QueueInstance) GetCounter(keyName string) (int64, error) {
-	conn, _ := qi.GetConnection()
-	defer conn.Close()
-
-	reply, err := conn.Do("GET", keyName)
-
-	if nil != err {
-		return 0, err
-	}
-	replyInt, err := redis.Int64(reply, err)
-	if nil != err {
-		return 0, err
-	}
-
-	return replyInt, nil
-}
