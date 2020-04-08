@@ -89,6 +89,11 @@ func printTest(args *Args, isJustTest bool) {
 	// Get config file content to struct
 	cfg := config.GetConfig(args.ConfigFile)
 
+	// check statistic redis source
+	if "redis" == strings.ToLower(cfg.Statistic.SourceType) {
+		oredis.GetInstancePanic(cfg.Statistic.RedisSource)
+	}
+
 	enabledQueueCount := 0
 	// sort the DelayOnFailure array
 	for _, r := range cfg.Redis {
@@ -123,6 +128,8 @@ func printTest(args *Args, isJustTest bool) {
 // GetStats get stats information format can be "text", "html", "json"
 func GetStats(args *Args, format string) string {
 	cfg := config.GetConfig(args.ConfigFile)
+	// init statistic for record
+	statistic.InitStatistic(cfg.Statistic)
 
 	allQueueStatistic := []*statistic.QueueStatistic{}
 

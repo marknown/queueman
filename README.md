@@ -74,7 +74,7 @@ Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件�
 
 #### Supervisor
 ```
-[program:Queueman]
+[program:queueman]
 process_name=%(program_name)s_%(process_num)02d
 directory = /usr/local/bin/queueman_linux
 command=/usr/local/bin/queueman_linux -c /etc/queueman.json
@@ -83,9 +83,24 @@ autorestart=true
 user=root
 numprocs=1
 redirect_stderr=true
-stdout_logfile_maxbytes = 100MB  ; stdout 日志文件大小，默认 50MB
-stdout_logfile_backups = 20     ; stdout 日志文件备份数
+stdout_logfile_maxbytes = 100MB
+stdout_logfile_backups = 20
 stdout_logfile=/var/log/queueman/error.log
+```
+
+1. 把 Supervisor 配置文件放入 supervisor.d 目录
+2. 使用如下命令启动
+```
+supervisorctl update
+```
+3. 状态查看
+```
+supervisorctl status
+```
+1. 启动与停止
+```
+supervisorctl start queueman:queueman_00
+supervisorctl stop queueman:queueman_00
 ```
 
 ## 详细介绍
