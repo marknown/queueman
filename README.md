@@ -73,6 +73,12 @@ Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件�
 ```
 
 #### Supervisor
+复制文件到 Supervisor 配制目录
+```
+cp supervisor.conf /etc/supervisor.d/queueman.conf
+```
+
+配置文件示例
 ```
 [program:queueman]
 process_name=%(program_name)s_%(process_num)02d
@@ -95,12 +101,12 @@ supervisorctl update
 ```
 3. 状态查看
 ```
-supervisorctl status
+supervisorctl status queueman:
 ```
 1. 启动与停止
 ```
-supervisorctl start queueman:queueman_00
-supervisorctl stop queueman:queueman_00
+supervisorctl start queueman:
+supervisorctl stop queueman:
 ```
 
 ## 详细介绍

@@ -10,6 +10,7 @@ import (
 	"queueman/libs/constant"
 	"queueman/libs/queue"
 	"queueman/libs/statistic"
+	"queueman/libs/utils"
 	"runtime/debug"
 	"time"
 
@@ -91,6 +92,9 @@ func main() {
 			os.Exit(1)
 		}
 	}()
+
+	// out put every time started
+	log.Warnf("%s %s started at %s.", constant.APPNAME, constant.APPVERSION, utils.NowTimeStringCN())
 
 	for _, config := range cfg.Redis {
 		go queue.QFactory("Redis").Dispatcher(config)
