@@ -6,10 +6,15 @@ After=network.target
 [Service]
 Type=simple
 PIDFile=/var/run/queueman.pid
-ExecStart=/usr/bin/nohup /usr/local/bin/queueman_linux -c /etc/queueman.json > /var/log/queueman/error.log 2>&1 &
+ExecStart=/usr/local/bin/queueman_linux -c /etc/queueman.json
 ExecStop=/bin/kill -s QUIT $MAINPID
-Restart=1
+Restart=always
+RestartSec=1
+StartLimitInterval=0
 PrivateTmp=true
+#systemctl version great than 329
+#StandardOutput=append:/var/log/queueman/error.log
+#StandardError=append:/var/log/queueman/error.log
 
 [Install]
 WantedBy=multi-user.target
