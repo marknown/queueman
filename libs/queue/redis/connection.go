@@ -75,7 +75,7 @@ func (qi *QueueInstance) Length(queueName string) (int64, error) {
 }
 
 // DelayPop pop data from delay queue
-func (qi *QueueInstance) DelayPop(queueName string) ([]string, error) {
+func (qi *QueueInstance) DelayPop(queueName string, isReturnRaw bool) ([]string, error) {
 	conn, _ := qi.GetConnection()
 	defer conn.Close()
 
@@ -94,23 +94,29 @@ func (qi *QueueInstance) DelayPop(queueName string) ([]string, error) {
 		return result, err
 	}
 
+	// not resut, return empty result
 	if len(replys) <= 0 || replys[1].(int64) <= 0 {
 		return result, nil
 	}
 
+	// has result but length less than 0
 	replys2, err := redis.MultiBulk(replys[0], err)
 	if len(replys2) <= 0 {
 		return result, nil
 	}
 
 	for _, v := range replys2 {
-		vv := &DelayData{}
-		err := json.Unmarshal(v.([]byte), vv)
-		if nil != err {
-			continue
-		}
+		if isReturnRaw {
+			result = append(result, string(v.([]byte)))
+		} else {
+			vv := &DelayData{}
+			err := json.Unmarshal(v.([]byte), vv)
+			if nil != err {
+				continue
+			}
 
-		result = append(result, vv.Data)
+			result = append(result, vv.Data)
+		}
 	}
 
 	return result, err

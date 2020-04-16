@@ -139,6 +139,7 @@ ZADD queue:test2 NX 指定触发的Unix时间戳 {"uuid":"cada1c8d-503e-4a82-b46
 ZADD queue:test2 NX 1585817681 "{\"uuid\":\"cada1c8d-503e-4a82-b463-2b7ce2d2816e\",\"time\":1585817621,\"data\":\"redis delay data\"}"
 ```
 
+Redis 标准 DelayData 格式
 名称 | 说明 | 示例
 ------------ | ------------- | -------------
 uuid | 唯一id(zset消息不允许重复) | "cada1c8d-503e-4a82-b463-2b7ce2d2816e"
@@ -308,6 +309,7 @@ curl "http://127.0.0.1:8080/statistic?format=json"
                 {
                     "IsEnabled": true,                         # 是否启用，若为 false 则不 Queueman 不处理
                     "IsDelayQueue": false,			           # 是否延时队列 true 是 false 否
+                    "IsDelayRaw": false,                       # 延时队列是否初次读取时返回原始值，只有当延时队列zset格式不是Redis 标准 DelayData 格式时（比如自定义格式时）true 是 false 否
                     "QueueName": "queue:test1",                # 队列名称
                     "DispatchURL": "http://127.0.0.1/receive", # 接收队列数据的 http(s) 地址
                     "DispatchTimeout": 30,                     # Queueman转发超时时间
@@ -318,6 +320,7 @@ curl "http://127.0.0.1:8080/statistic?format=json"
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": true,
+                    "IsDelayRaw": false,
                     "QueueName": "queue:test2",
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,
@@ -344,6 +347,7 @@ curl "http://127.0.0.1:8080/statistic?format=json"
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": false,
+                    "IsDelayRaw": false,
                     "QueueName": "queue:test3",
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,
@@ -354,6 +358,7 @@ curl "http://127.0.0.1:8080/statistic?format=json"
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": true,
+                    "IsDelayRaw": false,
                     "QueueName": "queue:test4",
                     "DispatchURL": "http://127.0.0.1/receive",
                     "DispatchTimeout": 30,

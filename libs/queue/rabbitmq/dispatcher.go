@@ -335,7 +335,7 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 
 			log.WithFields(log.Fields{
 				"queueName": queueName,
-				"data":      queueData,
+				"queueData": queueData,
 			}).Info("Queue data")
 
 			queueRequest := &request.QueueRequest{

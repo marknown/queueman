@@ -18,6 +18,7 @@ type QueueConfig struct {
 	SourceType      string // queue type example "Redis"
 	IsEnabled       bool   // this config is enabled
 	IsDelayQueue    bool   // the queue is a delay queue
+	IsDelayRaw      bool   // your format for redis zset delay queue, not the standard's DelayData
 	QueueName       string // name of the queue
 	DispatchURL     string // URL to dispatch
 	DispatchTimeout int    // timeout for dispatch. 0 is unlimited

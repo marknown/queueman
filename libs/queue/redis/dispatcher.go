@@ -197,7 +197,12 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 		// control the concurency
 		concurency <- true
 
-		queueDatas, err := qi.DelayPop(queueName)
+		// runMode is "first" and is main queue and configure file's IsDelayRaw is true
+		isReturnRaw := false
+		if "first" == runMode && qi.Queue.IsDelayRaw {
+			isReturnRaw = true
+		}
+		queueDatas, err := qi.DelayPop(queueName, isReturnRaw)
 
 		if nil != err || len(queueDatas) < 1 {
 			<-concurency // remove control
@@ -237,7 +242,7 @@ func (qi *QueueInstance) ProcessDelay(runMode string) {
 
 				log.WithFields(log.Fields{
 					"queueName": queueName,
-					"data":      queueData,
+					"queueData": queueData,
 				}).Info("Queue data")
 
 				queueRequest := &request.QueueRequest{

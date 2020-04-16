@@ -37,6 +37,7 @@
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": false,
+                    "IsDelayRaw": false,
                     "QueueName": "queue:test1",
                     "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
                     "DispatchTimeout": 30,
@@ -47,6 +48,7 @@
                 {
                     "IsEnabled": true,
                     "IsDelayQueue": true,
+                    "IsDelayRaw": false,
                     "QueueName": "queue:test2",
                     "DispatchURL": "http://127.0.0.1/examples/receive_from_queue",
                     "DispatchTimeout": 30,
