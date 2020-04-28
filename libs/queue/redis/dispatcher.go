@@ -84,24 +84,11 @@ func (qi *QueueInstance) ProcessNormal(delayTime int) {
 	// control the concurency
 	concurency := make(chan bool, qi.Queue.Concurency)
 
-	for {
+	deliveries, _ := qi.Consume(qi.Queue.QueueName)
+
+	for queueData := range deliveries {
 		// control the concurency
 		concurency <- true
-
-		queueData, err := qi.Pop(qi.Queue.QueueName)
-		if nil != err {
-			<-concurency // remove control
-
-			if nil != err && "redigo: nil returned" != err.Error() {
-				log.WithFields(log.Fields{
-					"queueName":                   qi.Queue.QueueName,
-					"Process handler has a error": err.Error(),
-				}).Warn("!!! ProcessDelay handler has a error")
-			}
-
-			time.Sleep(1 * time.Second)
-			continue
-		}
 
 		log.WithFields(log.Fields{
 			"queueData": queueData,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 // DelayData struct
@@ -14,6 +15,38 @@ type DelayData struct {
 	UUID string `json:"uuid"` // UUID for delay value
 	Time int64  `json:"time"` // the unix timestamp to trigger
 	Data string `json:"data"` // the queue origin data
+}
+
+// Consume a list queue
+func (qi *QueueInstance) Consume(queueName string) (<-chan string, error) {
+	deliveries := make(chan string, 500)
+	concurency := make(chan bool, 500)
+
+	go func() {
+		for {
+			concurency <- true
+			go func() {
+				defer func() {
+					<-concurency
+				}()
+
+				d, err := qi.Pop(queueName)
+				if err != nil {
+					if nil != err && "redigo: nil returned" != err.Error() {
+						log.WithFields(log.Fields{
+							"queueName":                   queueName,
+							"Process handler has a error": err.Error(),
+						}).Warn("!!! ProcessDelay handler has a error")
+					}
+					return
+				}
+
+				deliveries <- d
+			}()
+		}
+	}()
+
+	return deliveries, nil
 }
 
 // Pop a element
