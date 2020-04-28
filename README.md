@@ -6,6 +6,33 @@ Queueman 是一个适用于 RabbitMQ、Redis 队列的高性能分发中间件�
 2. 简单配置就可以自动失败后重试
 3. 不用再写命令行代码就可以消费队列了
 
+**测试理论速度：单机 1-3 万条/秒**
+
+**配置用例1:**
+- 服务器: 阿里云 ecs.sn1ne.large 2 vCPU 4 GiB (I/O优化) CentOS 7.2 64位
+- Redis: 阿里云 Redis 4.0 1G集群版 最大连接数： 20,000
+- RabbitMQ: 阿里云 消息队列 AMQP 协议版本：0-9-1 TPS峰值流量：1000
+- 网络：阿里云内网连接
+
+队列类型 | 数据量 | 处理时间（秒） | 处理速度 | 备注
+------------ | ------------- | ------------- | ------------- | -------------
+RabbitMQ | 1000000 | 76.785453 | 13023/s | 阿里云内网连接、开启 auto ack、不开启 DispatchURL 转发
+Redis | 1000000 | 31.523070 | 31722/s | 阿里云内网连接、不开启 DispatchURL 转发
+同时跑 RabbitMQ & Redis 各一个队列| 各测试1000000 | 126.724109 49.977177 | 11318/s | 内网、开启 auto ack、不开启 DispatchURL 转发
+
+
+**配置用例2:**
+- 服务器: MacBook Pro (Retina, 15-inch, Mid 2015) 2.2 GHz 四核Intel Core i7 macOS Catalina 10.15.3
+- Redis: 阿里云 Redis 4.0 1G集群版 最大连接数： 20,000
+- RabbitMQ: 阿里云 消息队列 AMQP 协议版本：0-9-1 TPS峰值流量：1000
+- 网络：公网连接
+
+队列类型 | 数据量 | 处理时间（秒） | 处理速度 | 备注
+------------ | ------------- | ------------- | ------------- | -------------
+本机 | RabbitMQ | 1000000 | 79.617749254 | 12560/s | 公网连接、开启 auto ack、不开启 DispatchURL 转发
+本机 | Redis | 1000000 | 78.276917 | 12775/s | 公网连接、不开启 DispatchURL 转发
+本机 | 同时跑 RabbitMQ & Redis 各一个队列| 各测试1000000 | 97.412025 89.785312 | 10752/s | 公网连接、开启 auto ack、不开启 DispatchURL 转发
+
 ## 内容列表
 
 - [背景](#背景)
@@ -273,7 +300,8 @@ curl "http://127.0.0.1:8080/statistic?format=json"
 {
     "App": {								   # Queueman app 级别配置
         "IsDebug" : false,                     # true （会输出 info 级别信息） false （只输出 warn 级别及以上信息）
-        "PIDFile" : "/var/run/queueman.pid"    # pid文件位置
+        "PIDFile" : "/var/run/queueman.pid",   # pid文件位置
+        "LogDir"  : "/var/log/queueman/"       # 日志文件目录，为空表示输出到 stdout
     },
     "Statistic": {                             # 统计配置
         "HTTPPort": 8080,                      # Web 查看端口

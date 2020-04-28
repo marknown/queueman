@@ -4,5 +4,5 @@ const (
 	// APPNAME app name
 	APPNAME = "QueueMan"
 	// APPVERSION app version
-	APPVERSION = "V1.0.5"
+	APPVERSION = "V1.0.6"
 )

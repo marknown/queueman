@@ -44,6 +44,19 @@ func init() {
 	log.SetLevel(log.InfoLevel)
 }
 
+func setLogFile(logDir string) {
+	fileName := fmt.Sprintf("%s/queueman.%s.log", logDir, utils.NowDateStringCN())
+	var file, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"error":    err,
+			"fileName": fileName,
+		}).Fatal(`Could Not Open Log File`)
+	} else {
+		log.SetOutput(file)
+	}
+}
+
 func main() {
 	// Get command args
 	args := command.GetArgs()
@@ -70,6 +83,23 @@ func main() {
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Fatal("A pidfile error has occurred")
+	}
+
+	// write log to file
+	if "" != cfg.App.LogDir {
+		if !utils.IsDir(cfg.App.LogDir) {
+			log.Warn("Log file dir is not exist or not a direcotry, please check it in your configure file.")
+		} else {
+			setLogFile(cfg.App.LogDir)
+			go func() {
+				for {
+					select {
+					case <-time.After(60 * time.Second):
+						setLogFile(cfg.App.LogDir)
+					}
+				}
+			}()
+		}
 	}
 
 	// catch the error

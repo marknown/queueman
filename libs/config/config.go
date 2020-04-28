@@ -14,6 +14,7 @@ import (
 type App struct {
 	IsDebug bool   // is debug mode
 	PIDFile string // PIDFile path
+	LogDir  string // Log directory
 }
 
 // Config for the file

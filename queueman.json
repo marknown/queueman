@@ -1,7 +1,8 @@
 {
     "App": {
         "IsDebug" : false,
-        "PIDFile" : "/var/run/queueman.pid"
+        "PIDFile" : "/var/run/queueman.pid",
+        "LogDir"  : "/var/log/queueman/"
     },
     "Statistic": {
         "HTTPPort": 8080,
