@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/marknown/ohttp"
+	log "github.com/sirupsen/logrus"
 )
 
 // QueueResponse for queue request
@@ -45,8 +46,11 @@ func (req *QueueRequest) Post() (*QueueResponse, error) {
 
 	// fixed a bug. when err is occour the response is nil, response.StatusCode will panic
 	if err != nil {
-		// fmt.Printf("%v\n\n", err)
-		// debug.PrintStack()
+		log.WithFields(log.Fields{
+			"err":       err,
+			"queueData": req.QueueData,
+			"Response":  content,
+		}).Warn("Request post error")
 
 		result.Code = 0
 		result.Message = content
@@ -59,6 +63,12 @@ func (req *QueueRequest) Post() (*QueueResponse, error) {
 	err = json.Unmarshal([]byte(content), &result)
 
 	if nil != err {
+		log.WithFields(log.Fields{
+			"err":       err,
+			"queueData": req.QueueData,
+			"Response":  content,
+		}).Warn("Request unmarshal error")
+
 		result.Code = 0
 		result.Message = content
 		return result, err
