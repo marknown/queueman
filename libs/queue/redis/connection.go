@@ -19,8 +19,8 @@ type DelayData struct {
 
 // Consume a list queue
 func (qi *QueueInstance) Consume(queueName string) (<-chan string, error) {
-	deliveries := make(chan string, 500)
-	concurency := make(chan bool, 500)
+	deliveries := make(chan string, 200)
+	concurency := make(chan bool, 200)
 
 	go func() {
 		for {
@@ -38,6 +38,9 @@ func (qi *QueueInstance) Consume(queueName string) (<-chan string, error) {
 							"Process handler has a error": err.Error(),
 						}).Warn("!!! ProcessDelay handler has a error")
 					}
+
+					// if any error occured sleep a while
+					time.Sleep(1 * time.Second)
 					return
 				}
 

@@ -3,9 +3,9 @@ package request
 import (
 	"encoding/json"
 	"queueman/libs/constant"
+	"queueman/libs/ohttp"
 	"time"
 
-	"github.com/marknown/ohttp"
 	log "github.com/sirupsen/logrus"
 )
 
