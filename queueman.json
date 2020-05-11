@@ -2,6 +2,7 @@
     "App": {
         "IsDebug" : false,
         "PIDFile" : "/var/run/queueman.pid",
+        "LogFormatter": "text",
         "LogDir"  : "/var/log/queueman/"
     },
     "Statistic": {

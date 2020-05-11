@@ -18,30 +18,22 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func init() {
-	// Log as JSON instead of the default ASCII formatter.
-	// log.SetFormatter(&log.JSONFormatter{})
-	// log.SetFormatter(&log.TextFormatter{})
-
-	customFormatter := new(log.TextFormatter)
-	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
-	customFormatter.FullTimestamp = true
-	log.SetFormatter(customFormatter)
-
-	// Output to stdout instead of the default stderr
-	// Can be any io.Writer, see below for File example
+func initLog() {
 	log.SetOutput(os.Stdout)
-	// var file, err = os.OpenFile("./log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	// if err != nil {
-	// 	log.WithFields(log.Fields{
-	// 		"error": err,
-	// 	}).Fatal(`Could Not Open Log File`)
-	// }
-	// log.SetOutput(file)
-
-	// Only log the warning severity or above.
-	// log.SetLevel(log.WarnLevel)
 	log.SetLevel(log.InfoLevel)
+}
+
+func setLogFormatter(formatter string) {
+	if "json" == formatter {
+		customFormatter := new(log.JSONFormatter)
+		customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+		log.SetFormatter(customFormatter)
+	} else {
+		customFormatter := new(log.TextFormatter)
+		customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+		customFormatter.FullTimestamp = true
+		log.SetFormatter(customFormatter)
+	}
 }
 
 func setLogFile(logDir string) {
@@ -58,6 +50,9 @@ func setLogFile(logDir string) {
 }
 
 func main() {
+	// init logger
+	initLog()
+
 	// Get command args
 	args := command.GetArgs()
 
@@ -70,20 +65,10 @@ func main() {
 		log.SetLevel(log.WarnLevel)
 	}
 
-	// add the pidfile
-	if "" == cfg.App.PIDFile {
-		log.WithFields(log.Fields{
-			"error": errors.New("PIDFile option not configure in the configure file"),
-		}).Fatal(`Please check the "PIDFile" option in configure file`)
+	if "" == cfg.App.LogFormatter {
+		cfg.App.LogFormatter = "text"
 	}
-
-	// check & put the pid to the pid file
-	pidHandle, err := pidfile.New(cfg.App.PIDFile)
-	if nil != err {
-		log.WithFields(log.Fields{
-			"error": err,
-		}).Fatal("A pidfile error has occurred")
-	}
+	setLogFormatter(cfg.App.LogFormatter)
 
 	// write log to file
 	if "" != cfg.App.LogDir {
@@ -100,6 +85,21 @@ func main() {
 				}
 			}()
 		}
+	}
+
+	// add the pidfile
+	if "" == cfg.App.PIDFile {
+		log.WithFields(log.Fields{
+			"error": errors.New("PIDFile option not configure in the configure file"),
+		}).Fatal(`Please check the "PIDFile" option in configure file`)
+	}
+
+	// check & put the pid to the pid file
+	pidHandle, err := pidfile.New(cfg.App.PIDFile)
+	if nil != err {
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Fatal("A pidfile error has occurred")
 	}
 
 	// catch the error

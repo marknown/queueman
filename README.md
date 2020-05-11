@@ -76,7 +76,6 @@ Redis | 1000000 | 31.523070 | 31722/s | 阿里云内网连接、不开启 Dispat
 # cp bin/queueman_linux /usr/local/bin/queueman_linux
 # cp queueman.json /etc/queueman.json
 # mkdir -p /var/log/queueman
-# touch /var/log/queueman/error.log
 ```
 
 ### 各种环境运行
@@ -301,6 +300,7 @@ curl "http://127.0.0.1:8080/statistic?format=json"
     "App": {								   # Queueman app 级别配置
         "IsDebug" : false,                     # true （会输出 info 级别信息） false （只输出 warn 级别及以上信息）
         "PIDFile" : "/var/run/queueman.pid",   # pid文件位置
+        "LogFormatter": "json",                # 日志格式 text json 
         "LogDir"  : "/var/log/queueman/"       # 日志文件目录，为空表示输出到 stdout
     },
     "Statistic": {                             # 统计配置

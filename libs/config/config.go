@@ -12,9 +12,10 @@ import (
 
 // App configure for the app
 type App struct {
-	IsDebug bool   // is debug mode
-	PIDFile string // PIDFile path
-	LogDir  string // Log directory
+	IsDebug      bool   // is debug mode
+	PIDFile      string // PIDFile path
+	LogFormatter string // Log formatter text or json
+	LogDir       string // Log directory
 }
 
 // Config for the file
